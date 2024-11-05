@@ -1,0 +1,29 @@
+- name: Run HTTP container
+  community.docker.docker_container:
+    name: http-container
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - /app:/usr/share/nginx/html
+
+- name: Run SCRIPT container
+  community.docker.docker_container:
+    name: script-container
+    image: php:fpm
+    ports:
+      - "9000:9000"
+    volumes:
+      - /app:/app
+
+- name: Run DATA container
+  community.docker.docker_container:
+    name: data-container
+    image: mariadb:latest
+    env:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+    ports:
+      - "3306:3306"

@@ -1,0 +1,18 @@
+---
+- name: Run HTTP container
+  docker_container:
+    name: http-container
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - /app:/usr/share/nginx/html
+
+- name: Run SCRIPT container
+  docker_container:
+    name: script-container
+    image: php:fpm
+    ports:
+      - "9000:9000"
+    volumes:
+      - /app:/app

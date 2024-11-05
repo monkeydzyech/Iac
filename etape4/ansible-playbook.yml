@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install Docker on EC2 Instances
+      shell: |
+        amazon-linux-extras install -y docker
+      become: true
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+      become: true
+
+    - name: Install pip using amazon-linux-extras
+      shell: |
+        amazon-linux-extras install -y epel
+        yum install -y python3-pip
+      become: true
+
+    - name: Install Python requests module
+      shell: |
+        python3 -m pip install requests
+      become: true
+
+    - name: Run HTTP container
+      docker_container:
+        name: http-container
+        image: nginx:latest
+        ports:
+          - "8080:80"
+      become: true
+
+    - name: Run SCRIPT container
+      docker_container:
+        name: script-container
+        image: php:fpm
+        ports:
+          - "9000:9000"
+      become: true
+
+    - name: Run DATA container
+      docker_container:
+        name: data-container
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+        ports:
+          - "3306:3306"
+      become: true

@@ -1,0 +1,43 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Ensure pip is installed (Amazon Linux/RedHat)
+      when: ansible_distribution == "Amazon"
+      shell: |
+        yum install -y python3-pip
+      register: install_pip
+      changed_when: install_pip.rc == 0
+
+    - name: Install Python 3.8 (Amazon Linux/RedHat)
+      when: ansible_distribution == "Amazon"
+      shell: |
+        amazon-linux-extras enable python3.8
+        yum install -y python3.8
+      register: install_python
+      changed_when: install_python.rc == 0
+
+    - name: Update alternatives to use Python 3.8
+      when: ansible_distribution == "Amazon"
+      shell: |
+        alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+        python3 -m pip install --upgrade pip
+      register: update_python
+      changed_when: update_python.rc == 0
+
+    - name: Ensure pip is installed (Debian/Ubuntu)
+      when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+      apt:
+        name: python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Install Python requests and compatible urllib3 module
+      pip:
+        name:
+          - requests
+          - "urllib3<2.0"  
+        executable: pip3
+
+    - import_tasks: docker-install.yml
+    - import_tasks: container-setup.yml

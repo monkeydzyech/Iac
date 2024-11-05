@@ -1,0 +1,12 @@
+---
+- name: Install Docker on EC2 Instances
+  shell: |
+    amazon-linux-extras install -y docker
+  become: true
+
+- name: Start and enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true
+  become: true

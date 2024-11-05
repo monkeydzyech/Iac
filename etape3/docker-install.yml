@@ -1,0 +1,20 @@
+---
+- name: Update package cache and install Docker (Debian/Ubuntu)
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+  apt:
+    update_cache: yes
+    name: docker.io
+    state: present
+
+- name: Update package cache and install Docker (Amazon Linux)
+  when: ansible_distribution == "Amazon"
+  shell: |
+    amazon-linux-extras install -y docker
+  register: install_docker
+  changed_when: install_docker.rc == 0
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true
