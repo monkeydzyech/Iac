@@ -1,0 +1,25 @@
+- name: Run HTTP container
+  community.docker.docker_container:
+    name: http-container
+    image: nginx
+    state: started
+    restart_policy: always
+    ports:
+      - "8080:80"
+
+- name: Run SCRIPT container
+  community.docker.docker_container:
+    name: script-container
+    image: php:7.4-fpm
+    state: started
+    restart_policy: always
+
+- name: Run DATA container
+  community.docker.docker_container:
+    name: data-container
+    image: mariadb
+    state: started
+    restart_policy: always
+    env:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: wordpress
